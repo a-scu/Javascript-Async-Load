@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Ajax Page</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: monospace;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #777;
+      }
+      header {
+        display: flex;
+        position: sticky;
+        padding: 10px;
+        justify-content: space-between;
+        align-items: center;
+        top: 0;
+        width: 100%;
+        background-color: #6295d0;
+        color: #002c9a;
+      }
+      header h1 {
+        margin: 0 10px;
+      }
+      header nav a {
+        margin: 0 10px;
+        color: #002c9a;
+        font-weight: bold;
+        text-decoration: none;
+      }
+      main {
+        padding: 20px;
+      }
+      main h2 {
+        margin-bottom: 10px;
+        color: #62cbd0;
+      }
+      footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 10px;
+        background-color: #666;
+        font-weight: bold;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Loads HTML pages with Ajax</h1>
+      <nav>
+        <a href="assets/home.html" id="home">Home</a>
+        <a href="assets/about.html" id="about">About</a>
+        <a href="assets/contact.html" id="contact">Contact</a>
+      </nav>
+    </header>
+
+    <main></main>
+
+    <footer>Footer</footer>
+
+    <script>
+      const d = document,
+        $main = d.querySelector("main");
+
+      const getHTML = (options) => {
+        const { url, success, error } = options;
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", (e) => {
+          if (xhr.readyState !== 4) return;
+          if (xhr.status >= 200 && xhr.status < 300) {
+            let html = xhr.responseText;
+            success(html);
+          } else
+            error(
+              `<b>Error ${xhr.status}: ${
+                xhr.statusText || "An error has ocurred"
+              }</b>`
+            );
+        });
+        xhr.open("GET", url);
+        xhr.setRequestHeader("Content-Type", "text/html; charset=utf-8");
+        xhr.send();
+      };
+
+      d.addEventListener("DOMContentLoaded", (e) =>
+        getHTML({
+          url: "assets/home.html",
+          success: (html) => ($main.innerHTML = html),
+          error: (e) => ($main.innerHTML = e),
+        })
+      );
+
+      d.addEventListener("click", (e) => {
+        if (e.target.matches("nav a")) {
+          e.preventDefault();
+          getHTML({
+            url: e.target.href,
+            success: (html) => ($main.innerHTML = html),
+            error: (e) => ($main.innerHTML = e),
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
